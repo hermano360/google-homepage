@@ -1,0 +1,60 @@
+require 'csv'
+
+
+
+puts 'Who is the Southwest Engineer for this project? (First name)'
+
+swg_engineer = gets.chomp
+
+puts 'What is the submission version letter? (a,b,c,d...)'
+resubmission = gets.chomp
+resubmission_valid = false
+
+while resubmission_valid == false do
+	if (resubmission.upcase == 'A' or resubmission.upcase == 'B')
+		resubmission_valid = true
+	else
+		puts 'Invalid response, please re-enter'
+		resubmission = gets.chomp
+	end
+end
+
+puts 'What is the full name of the project? SIMP/201X .../Xxxx'
+full_project_name = gets.chomp.match(/(SIMP)\/(201[67] [A-Z]+)\/([A-Za-z0-9& ]+)/)
+#Maybe include more questions after 3rd attempt? New year? Simp typed correctly? etc.
+while full_project_name.nil? == true do
+	puts 'Please type in the name exactly how it appears.'
+	full_project_name = gets.chomp.match(/(SIMP)\/(201[67] [A-Z]+)\/([A-Za-z0-9& ]+)/)
+end
+
+puts 'What is the WR Number for this project?'
+wr_number = gets.chomp
+
+ensured_link = "https://ensured.enengineering.com/clients/SG/Shared\%20Documents/Forms/AllItems.aspx?RootFolder=\%2Fclients\%2FSG\%2FShared\%20Documents\%2F\%5FSWG\%20SCD\%20ENGINEERING%20PROJECTS&FolderCTID=0x012000E1BA8FEB7A1F864788CA71ACF18C4E13&View=\%7BF8FBAD1C\%2D2B03\%2D42FD\%2D998D\%2D4D10C19B62F7\%7D"
+
+puts "Is this project using only open trench to install Mains?(yes,no)"
+open_trench_answer = gets.chomp
+streets_op = []
+street = ''
+if open_trench_answer.upcase == 'YES'
+	while street.upcase != 'END'
+		puts 'Please type in each street that is open trenched one by one. Finish by typing "end".'
+		street = gets.chomp
+		if street.upcase != 'END'
+			streets_op.push(street)
+		end
+	end
+end
+
+
+re = ''
+submissionx = '' 
+if resubmission != 'A'
+	re = 're'
+	submissionx = ' Submission '+ resubmission
+end
+
+print "Hello " + swg_engineer + ", \n\nI have uploaded the " 
+print re + 'submittal ' + full_project_name[0] + 
+print " drawing package and report documents to the ENsured website, located under the project folder with the title \"WR " + wr_number + ' ' + full_project_name[1]+full_project_name[2]+full_project_name[3].upcase + submissionx + "\". I have provided the link to the project folder below.\n\n"+ensured_link+"\n\nBased on our field noting, EN Engineering has designed the proposed 2\" PE Main to be installed via"
+

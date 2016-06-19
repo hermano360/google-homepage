@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Saferoute</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.16/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/css/esri.css">
+  <link rel="stylesheet" href="style.css" />
+
+  <script type="text/javascript">
+    var dojoConfig = {
+      parseOnLoad: true
+    };
+  </script>
+  <script src="https://js.arcgis.com/3.16/"></script>
+  <script>
+    require([
+      "esri/urlUtils",
+      "esri/config",
+      "esri/map",
+      "esri/graphic",            
+      "esri/tasks/RouteTask",            
+      "esri/tasks/RouteParameters",
+      "esri/tasks/FeatureSet",            
+      "esri/symbols/SimpleMarkerSymbol",
+      "esri/symbols/SimpleLineSymbol",  
+      "esri/Color",
+      "dojo/_base/array",
+      "dojo/on",
+      "dojo/dom",
+      "dijit/registry",
+      "esri/tasks/geometry",
+      "esri/units",
+      "dijit/layout/BorderContainer",
+      "dijit/layout/ContentPane",
+      "dijit/form/HorizontalSlider",
+      "dijit/form/HorizontalRuleLabels"
+      ], function (
+        urlUtils, esriConfig, Map, Graphic, RouteTask, RouteParameters,
+        FeatureSet, SimpleMarkerSymbol, SimpleLineSymbol,           
+        Color, array, on, dom, registry
+        ) {
+        var data = [
+        "Disturbance of the Peace",-118.4838611,34.01306945,1,
+        "Audible Burglar Alarm",-118.4555694,34.025375,1,
+        "Audible Burglar Alarm",-118.4556389,34.02026389,1,
+        "Auto Burglary Report",-118.4858611,34.03840278,1,
+        "Battery Just Occurred",-118.4974167,34.00933333,1,
+        "Bike Theft Report",-118.4641111,34.03013889,1,
+        "Disturbance at a Business",-118.5006528,34.01718056,1,
+        "Disturbance at a Business",-118.472125,34.01804167,1,
+        "Disturbance of the Peace",-118.472,34.02686111,1,
+        "Disturbance of the Peace",-118.484875,34.01236111,1,
+        "Disturbance of the Peace",-118.4629861,34.02290278,1,
+        "Disturbance of the Peace",-118.4964722,34.01011111,1,
+        "Disturbance of the Peace",-118.5046111,34.0245,1,
+        "Disturbance of the Peace Report",-118.4738194,34.03756945,1,
+        "Fight",-118.494375,34.01180556,1,
+        "Grand Theft Auto Report",-118.4787917,34.00372222,1,
+        "Petty Theft Just Occurred",-118.4831944,34.00161111,1,
+        "Suspicious Circumstances",-118.4934306,34.02438889,1,
+        "Suspicious Person",-118.4700556,34.00376389,1,
+        "Suspicious Person",-118.4959444,34.01194445,1,
+        "Theft of Recyclables",-118.5069306,34.022625,1,
+        "Trespassing",-118.4924722,34.01333333,1,
+        "Trespassing",-118.4994306,34.02086111,1,
+        "Elder Abuse",-118.4807778,34.02933333,1,
+        "Elder Abuse",-118.4820556,34.02569445,1,
+        "Elder Abuse",-118.5121944,34.02805556,1,
+        "Elder Abuse",-118.4590278,34.01902778,1,
+        "Elder Abuse",-118.4704167,34.00613889,1,
+        "Elder Abuse",-118.5103889,34.02430556,1,
+        "Fight",-118.4974167,34.01252778,1,
+        "Fight",-118.4964722,34.01011111,1,
+        "Grand Theft Auto Report",-118.4974861,34.01841667,1,
+        "Health & Safety Code Violation",-118.4779722,34.00598611,1,
+        "Health & Safety Code Violation",-118.4757222,34.00725,1,
+        "Indecent Exposure Now",-118.4885972,34.01255556,1,
+        "Malicious Mischief Just Occurred",-118.4916667,34.01658333,1,
+        "Malicious Mischief Now",-118.49625,34.01419445,1,
+        "Malicious Mischief Report",-118.48725,34.00961111,1,
+        "Missing Person",-118.48425,34.02913889,1,
+        "Person with a Gun",-118.4916667,34.02447222,1,
+        "Petty Theft Just Occurred",-118.4893056,34.02638889,1,
+        "Petty Theft Just Occurred",-118.4975278,34.04180556,1,
+        "Petty Theft Just Occurred",-118.4767778,34.00729167,1,
+        "Petty Theft Now",-118.4915278,34.00665278,2,
+        "Petty Theft Report",-118.4614722,34.02372222,2,
+        "Petty Theft Report",-118.4698194,34.03170833,2,
+        "Silent Robbery Alarm",-118.4964722,34.01011111,2,
+        "Strongarm Robbery Just Occurred",-118.4953056,34.02284722,2,
+        "Suspicious Circumstances",-118.4886667,34.02031945,2,
+        "Suspicious Circumstances",-118.4601944,34.01025,2,
+        "Suspicious Circumstances",-118.47875,34.00888889,2,
+        "Suspicious Circumstances",-118.4539028,34.02338889,2,
+        "Suspicious Circumstances",-118.4576389,34.02179167,2,
+        "Suspicious Circumstances",-118.4819583,34.04141667,2,
+        "Suspicious Person",-118.4984306,34.01765278,2,
+        "Suspicious Person",-118.49625,34.01419445,2,
+        "Suspicious Person",-118.4741111,34.01495833,2,
+        "Suspicious Person",-118.4956389,34.01208333,2,
+        "Suspicious Person",-118.4974167,34.01252778,2,
+        "Suspicious Person",-118.4965556,34.01525,2,
+        "Suspicious Person",-118.4892917,34.01101389,2,
+        "Suspicious Vehicle",-118.4640417,34.02236111,2,
+        "Suspicious Vehicle",-118.4964722,34.01011111,2,
+        "Suspicious Vehicle",-118.4965972,34.02316667,2,
+        "Suspicious Vehicle",-118.4796111,33.99805556,2,
+        "Threats Report/Investigations",-118.4870972,34.02291667,2,
+        "Threats Report/Investigations",-118.4691944,34.02166667,2,
+        "Auto Burglary Report",-118.49925,34.04184722,2,
+        "Auto Burglary Report",-118.4769722,34.036375,2,
+        "Auto Burglary Report",-118.4729583,34.00523611,2,
+        "Battery Just Occurred",-118.4984306,34.01765278,2,
+        "Battery Just Occurred",-118.4629861,34.02290278,2,
+        "Bike Theft Report",-118.4944861,34.0073889,2,
+        "Bike Theft Report",-118.4930972,34.01544444,2,
+        "Burglary Report",-118.488125,34.00769444,2,
+        "Disturbance of the Peace",-118.4945556,34.03008333,3,
+        "Fight",-118.4964722,34.01011111,3,
+        "Health & Safety Code Violation",-118.4813056,33.99938889,3,
+        "Indecent Exposure Now",-118.4811806,34.01204167,3,
+        "Petty Theft Just Occurred",-118.4984306,34.01765278,3,
+        "Report of Shots Fired",-118.4842778,34.02129167,3,
+        "Silent Robbery Alarm",-118.4955833,34.01994445,3,
+        "Suspicious Circumstances",-118.4824167,34.00265278,3,
+        "Suspicious Vehicle",-118.4878889,34.00519444,3,
+        "Trespassing",-118.5025972,34.019625,3,
+        "Trespassing",-118.4899306,34.02061111,3,
+        "Audible Burglar Alarm",-118.4959167,34.01706945,3,
+        "Audible Burglar Alarm",-118.4859306,34.01640278,3,
+        "Indecent Exposure Now",-118.5054167,34.02125,3,
+        "Suspicious Person",-118.4874583,34.03581944,3,
+        "Assistance Call",-118.4885278,34.02177778,3,
+        "Burglary Report",-118.5090139,34.02443056,3,
+        "Death Investigation",-118.4848611,34.00730556,3,
+        "Disturbance of the Peace",-118.4873194,34.00691667,3,
+        "Disturbance of the Peace",-118.4983333,34.027,3,
+        "Health & Safety Code Violation",-118.4965417,34.01918056,3,
+        "Health & Safety Code Violation",-118.4813056,33.99938889,3,
+        "Petty Theft Report",-118.48125,34.01086111,3,
+        "Trespassing",-118.4911944,34.02090278,3,
+        "Trespassing",-118.5006528,34.01718056,3
+        ];
+
+
+        var map, routeTask, routeParams, routes = [];
+        var stopSymbol, barrierSymbol, routeSymbols, polygonBarrierSymbol;
+        var mapOnClick_addStops_connect, mapOnClick_addBarriers_connect, mapOnClick_addPolygonBarriers_connect;
+        var stopCounter = 0;
+        // urlUtils.addProxyRule({
+        //   urlPrefix: "route.arcgis.com",  
+        //   proxyUrl: "/sproxy/"
+        // });
+        
+        map = new Map("map", {
+          basemap: "streets",
+          center: [-118.487270, 34.014346],
+          zoom: 14
+        });
+        routeTask = new RouteTask("https://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World");
+        routeParams = new RouteParameters();
+        routeParams.stops = new FeatureSet();
+        routeParams.barriers = new FeatureSet();
+        routeParams.polygonBarriers = new esri.tasks.FeatureSet();
+        polygonBarrierSymbol = new esri.symbol.SimpleFillSymbol();
+        routeParams.outSpatialReference = {"wkid":102100};
+        //dojo.ready(function() { routeTask.on("solve-complete", showRoute); });
+        routeTask.on("solve-complete", showRoute);
+        routeTask.on("error", errorHandler);
+
+        //used as the start symbol of a destination
+        startSymbol = new SimpleMarkerSymbol();
+        startSymbol.setAngle(0);
+        startSymbol.setColor(new Color([38, 115, 0, 0.82]));
+        startSymbol.setPath("M16,3.5c-4.142,0-7.5,3.358-7.5,7.5c0,4.143,7.5,18.121,7.5,18.121S23.5,15.143,23.5,11C23.5,6.858,20.143,3.5,16,3.5z M16,14.584c-1.979,0-3.584-1.604-3.584-3.584S14.021,7.416,16,7.416S19.584,9.021,19.584,11S17.979,14.584,16,14.584z");
+        startSymbol.setStyle(SimpleMarkerSymbol.STYLE_PATH);
+
+        //used as the end symbol of a destination
+        stopSymbol = new SimpleMarkerSymbol();
+        stopSymbol.setAngle(0);
+        stopSymbol.setColor(new Color([230, 0, 0, 0.82]));
+        stopSymbol.setPath("M16,3.5c-4.142,0-7.5,3.358-7.5,7.5c0,4.143,7.5,18.121,7.5,18.121S23.5,15.143,23.5,11C23.5,6.858,20.143,3.5,16,3.5z M16,14.584c-1.979,0-3.584-1.604-3.584-3.584S14.021,7.416,16,7.416S19.584,9.021,19.584,11S17.979,14.584,16,14.584z");
+        stopSymbol.setStyle(SimpleMarkerSymbol.STYLE_PATH);
+
+
+
+
+
+
+        routeSymbols = {
+          "Route 1": new SimpleLineSymbol().setColor(new Color([0,0,255,0.5])).setWidth(5),
+          "Route 2": new SimpleLineSymbol().setColor(new Color([0,255,0,0.5])).setWidth(5),
+          "Route 3": new SimpleLineSymbol().setColor(new Color([255,0,255,0.5])).setWidth(5)
+        };
+
+        //button click event listeners can't be added directly in HTML when the code is wrapped in an AMD callback
+        on(dom.byId("addStopsBtn"), "click", addStops);
+
+
+        on(dom.byId("clearStopsBtn"), "click", clearStops);
+        on(dom.byId("addBarriersBtn"), "click", addBarriers);
+        on(dom.byId("clearBarriersBtn"), "click", clearBarriers);
+        on(dom.byId("solveRoutesBtn"), "click", solveRoute);
+        on(dom.byId("clearAllBtn"), "click", clearAll);
+
+        on(dom.byId("bufferzone"), "click", showBufferZones);
+        on(dom.byId("icons"), "click", showIcons);
+
+        //Begins listening for click events to add stops
+
+
+        function addStops() {
+          removeEventHandlers();
+          mapOnClick_addStops_connect = map.on("click", addStop);
+        }
+        //Clears all stops
+        function clearStops() {
+
+          removeEventHandlers();
+          for (var i=routeParams.stops.features.length-1; i>=0; i--) {
+            map.graphics.remove(routeParams.stops.features.splice(i, 1)[0]);
+          } 
+        }
+        //Adds a stop. The stop is associated with the route currently displayed in the dropdown
+        function addStop(evt) {
+          if (stopCounter == 0) {
+            clearStops();
+            clearRoutes();
+            destinationSymbol = startSymbol;
+            stopCounter = 1;
+            addStops();
+          } else {
+            destinationSymbol = stopSymbol;
+            stopCounter = 0;
+
+          }
+
+          routeParams.stops.features.push(
+            map.graphics.add(
+              new esri.Graphic(
+                evt.mapPoint,
+                destinationSymbol,
+                { RouteName:dom.byId("routeName").value }
+                )
+              )
+            );
+          if (stopCounter == 0) {
+            solveRoute();
+          }
+          //
+          console.log("addStop", evt.mapPoint);
+        }
+        //Begins listening for click events to add barriers
+        function addBarriers() {
+          removeEventHandlers();
+          mapOnClick_addBarriers_connect = on(map, "click", addBarrier);
+        }
+        //Fast mode
+        function clearBarriers() {
+          removeEventHandlers();
+          for (var i=routeParams.barriers.features.length-1; i>=0; i--) {
+            map.graphics.remove(routeParams.barriers.features.splice(i, 1)[0]);
+          }
+          clearCircleBarrier();
+
+          //Create a new PictureMarkerSymbol based on the static image and set a few properties.
+          //Change url to customize
+          // Create barriers
+
+          //It doesn't quite make sense to make symbols where symbols are being removed...?
+          /*barrierSymbol = new esri.symbol.PictureMarkerSymbol({
+            "angle": 0,
+            "xoffset": 0,
+            "yoffset": 12,
+            "type": "esriPMS",
+            "url": "https://d30y9cdsu7xlg0.cloudfront.net/png/93071-200.png",
+            "contentType": "image/png",
+            "width": 24,
+            "height": 24
+          });*/
+
+          console.log("showIcons() middle");
+
+          for (var i = 0; i < data.length; i = i+4) {
+
+            if(data[i+3] > 2) {
+              console.log(data[i+2]+', '+data[i+1]+'\n');
+              routeParams.barriers.features.push(
+                map.graphics.add(
+                  new esri.Graphic(
+                    new esri.geometry.Point(data[i+1], data[i+2]),
+                    barrierSymbol
+                    )
+                  )
+                );
+            }
+          }
+        }
+        //Adds a barrier
+        function addBarrier(evt) {
+          routeParams.barriers.features.push(
+            map.graphics.add(
+              new esri.Graphic(
+                evt.mapPoint,
+                barrierSymbol
+                )
+              )
+            );
+          //
+          console.log("addBarrier", evt.mapPoint);
+        }
+        //Load-in barrier circle(polygon)
+        function addCircleBarrier(long, lat, severity) {
+          //op as opacity, radius as radius
+          var op, radius;
+          if(severity == 1) {
+            op = 0.05;
+            radius = 0.0004;
+          }
+          else if(severity == 2) {
+            op = 0.15;
+            radius = 0.0007;
+          }
+          else {
+            op = 0.25;
+            radius = 0.001;
+          }
+
+          /*
+          //Change circle color
+          polygonBarrierSymbol.setColor(new Color([255,0,0,op]));
+          //Change circle outline
+          polygonBarrierSymbol.setOutline(
+            new SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new Color([255,255,255,0]), 2));
+          var center = new esri.geometry.Point([long, lat]);
+          var ring = []; // point that make up the circle
+          var pts = 40; // number of points on the circle
+          var angle = 360 / pts; // used to compute points on the circle
+          for(var i = 1; i <= pts; i++) {
+            // convert angle to raidans
+            var radians = i * angle * Math.PI / 180;
+            // add point to the circle
+            ring.push([center.x + radius * Math.cos(radians), center.y + radius * Math.sin(radians)]);
+            
+            //
+            console.log("x", center.x + radius * Math.cos(radians));
+            console.log("y", center.y + radius * Math.sin(radians));
+          }
+          */
+
+          barrierSymbol = new PictureMarkerSymbol();
+          barrierSymbol.setHeight(10);
+          barrierSymbol.setWidth(10);
+          barrierSymbol.setUrl("http://www.freeiconspng.com/uploads/orange-warning-icon-3.png");
+
+          ring.push(ring[0]); // start point needs to == end point
+          var circle = new esri.geometry.Polygon(ring);
+          routeParams.polygonBarriers.features.push(  
+            map.graphics.add(
+              new esri.Graphic(
+                circle,
+                polygonBarrierSymbol)
+              )  
+            );
+        }
+        //Remove all circle(polygon) barriers
+        function clearCircleBarrier() {
+          removeEventHandlers();
+          for (var i=routeParams.polygonBarriers.features.length-1; i>=0; i--) {
+            map.graphics.remove(routeParams.polygonBarriers.features.splice(i, 1)[0]);
+          }
+        }
+        //Stops listening for click events to add barriers and stops (if they've already been wired)
+        function removeEventHandlers() {        
+          if (mapOnClick_addStops_connect) {
+            mapOnClick_addStops_connect.remove();
+          }
+          if (mapOnClick_addBarriers_connect) {
+            mapOnClick_addBarriers_connect.remove();
+          }
+          if (mapOnClick_addPolygonBarriers_connect) {
+            mapOnClick_addPolygonBarriers_connect.remove();
+          }
+        }
+        //Solves the routes. Any errors will trigger the errorHandler function.
+        function solveRoute() {
+          //Make sure data is ready?
+          //dojo.ready(function() {
+            removeEventHandlers();
+            routeTask.solve(routeParams);
+          //});
+        }
+        //Clears all routes
+        function clearRoutes() {
+          for (var i=routes.length-1; i>=0; i--) {
+            map.graphics.remove(routes.splice(i, 1)[0]);
+          }
+          routes = [];
+        }
+        //Draws the resulting routes on the map
+        function showRoute(evt) {
+          //Make sure data is ready?
+          //dojo.ready(function() {
+            clearRoutes();
+            array.forEach(evt.result.routeResults, function(routeResult, i) {
+              routes.push(
+                map.graphics.add(
+                  routeResult.route.setSymbol(routeSymbols[routeResult.routeName])
+                  )
+                );
+            });
+            
+            var msgs = ["Server messages:"];
+            array.forEach(evt.result.messages, function(message) {
+              msgs.push(message.type + " : " + message.description);
+            });
+            // if (msgs.length > 1) {
+            //   alert(msgs.join("\n - "));
+            // }
+          //});
+        }
+        //Reports any errors that occurred during the solve
+        function errorHandler(err) {
+          alert("An error occured\n" + err.message + "\n" + err.details.join("\n"));
+        }
+        //Clear all
+        function clearAll() {
+          clearStops();
+          clearBarriers();
+          clearCircleBarrier();
+          clearRoutes();
+        }
+        
+        map.on("load", function() {
+          // Create street lights
+          var featureLayer = new esri.layers.FeatureLayer("http://services1.arcgis.com/p84PN4WZvOWzi2j2/arcgis/rest/services/StreetLights/FeatureServer/0",{
+            mode: esri.layers.FeatureLayer.MODE_ONDEMAND,
+            outFields: ["*"]
+          });
+          map.addLayer(featureLayer);
+          
+          //Default
+          //showBufferZones();
+
+
+          alert("Barrier Symbol works");
+        });
+        
+        function showBufferZones() {
+          console.log("showBufferZones() called");
+
+          clearAll();
+
+          for (var i = 0; i < data.length; i = i+4) {
+           console.log(data[i+2]+', '+data[i+1]+'\n');
+
+           addCircleBarrier(data[i+1], data[i+2], data[i+3]);
+         }
+       }
+
+       function showIcons() {
+        console.log("showIcons() called");
+
+        clearAll();
+
+          //Create a new PictureMarkerSymbol based on the static image and set a few properties.
+          //Change url to customize
+          // Create barriers
+          barrierSymbol = new PictureMarkerSymbol();
+          barrierSymbol.setHeight(10);
+          barrierSymbol.setWidth(10);
+          barrierSymbol.setUrl("http://www.freeiconspng.com/uploads/orange-warning-icon-3.png");
+
+          console.log("showIcons() middle");
+
+          for (var i = 0; i < data.length; i = i+4) {
+
+            //if(data[i+3] > 2) {
+              console.log(data[i+2]+', '+data[i+1]+'\n');
+              routeParams.barriers.features.push(
+                map.graphics.add(
+                  new esri.Graphic(
+                    new esri.geometry.Point(data[i+1], data[i+2]),
+                    barrierSymbol
+                    )
+                  )
+                );
+            //}
+          }
+        }
+
+      });
+    </script>
+
+  </head>
+  <body>
+    <div id="safefast"> 
+      Select Route Setting
+      <select id="routeName">
+        <option value="Route 1">Safe</option>
+        <option value="Route 2">Balanced</option>
+        <option value="Route 3">Fast</option>
+      </select>
+    </div>
+    <div id="routecreation">
+      <button id="addStopsBtn">Begin</button>
+      <button id="clearStopsBtn">Safe</button>
+      <button id="addBarriersBtn">Balance</button>
+      <button id="clearBarriersBtn">Fast</button>
+      <!-- <button id="solveRoutesBtn">Solve Routes</button> -->
+      <button id="clearAllBtn">Clear</button>
+    </div>
+    <!--   <img src="images/murder.png" /> -->
+    <div id="centerpage">
+      <div id="map" style="width:900px; height:600px;"></div>
+      <form id="extrasettings">
+        <p>Choose display for Crime Data</p>
+        <input type="radio" name="myRadioButtons" id="bufferzone"  checked/> Buffer Zone<br>
+        <input type="radio" name="myRadioButtons" id="icons"  unchecked/> Icons<br><br>
+        <input type="checkbox" checked="checked" id="streetlights"/>Display Street Lights?<br>
+      </form>
+    </div>
+    <div id="erroralert">
+      <p>Any server error messages will be displayed in an alert box.</p>
+    </div>
+  </body>
+  </html>

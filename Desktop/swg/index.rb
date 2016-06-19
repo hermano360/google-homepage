@@ -1,7 +1,7 @@
 require 'csv'
 
 
-class Justification_Letter
+class Submission_Letter
 	def manual
 		puts 'Who is the Southwest Engineer for this project? (First name)'
 		@swg_engineer = gets.chomp
@@ -19,7 +19,7 @@ class Justification_Letter
 		#Maybe include more questions after 3rd attempt? New year? Simp typed correctly? etc.
 
 
-		
+
 		while full_project_name.nil? == true do
 			puts 'Please type in the name exactly how it appears.'
 			full_project_name = gets.chomp.match(/(SIMP)\/(201[67] [A-Za-z\s]+)\/([A-Za-z0-9& ]+)/)
@@ -77,7 +77,7 @@ puts "Is this project using only open trench to install Mains?(yes,no)"
 open_trench_answer = gets.chomp
 streets_ot = []
 street = ''
-puts 'fail'
+
 if open_trench_answer.upcase == 'YES'
 	while street.upcase != 'END'
 		puts 'Please type in each street that is open trenched one by one. Finish by typing "end".'
@@ -87,7 +87,6 @@ if open_trench_answer.upcase == 'YES'
 		end
 	end
 end
-puts 'fail2' + resubmission
 
 re = ''
 submissionx = '' 
